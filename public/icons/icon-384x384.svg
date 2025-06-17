@@ -1,0 +1,25 @@
+<svg width="384" height="384" viewBox="0 0 384 384" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="384" height="384" rx="57.599999999999994" fill="url(#gradient)"/>
+  
+  <!-- Book icon -->
+  <g transform="translate(76.80000000000001, 76.80000000000001)">
+    <!-- Book pages -->
+    <rect x="0" y="38.400000000000006" width="192" height="192" rx="7.68" fill="white" opacity="0.9"/>
+    <rect x="19.200000000000003" y="19.200000000000003" width="192" height="192" rx="7.68" fill="white" opacity="0.7"/>
+    
+    <!-- Pen -->
+    <line x1="134.39999999999998" y1="57.599999999999994" x2="211.20000000000002" y2="134.39999999999998" stroke="white" stroke-width="7.68" stroke-linecap="round"/>
+    <circle cx="218.88" cy="142.07999999999998" r="11.52" fill="white"/>
+  </g>
+  
+  <!-- App name -->
+  <text x="192" y="326.4" font-family="Arial, sans-serif" font-size="30.72" font-weight="bold" text-anchor="middle" fill="white">WN</text>
+</svg>

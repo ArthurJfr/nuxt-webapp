@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0.0",
+  "applicationName": "WikiNotes",
+  "applicationVersion": "1.0.0",
+  "manifestUrl": "/manifest.json",
+  "devtools": {
+    "enabled": true,
+    "remoteDebugging": false
+  }
+} 
