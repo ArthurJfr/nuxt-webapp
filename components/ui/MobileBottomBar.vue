@@ -148,7 +148,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'nuxt/app'
 
 // Utiliser le composable PWA
-const { showMobileUI } = usePWA()
+const { showMobileUI } = usePWADetection()
 
 // État réactif
 const isHidden = ref(false)

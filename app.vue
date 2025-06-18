@@ -15,6 +15,9 @@ const isDashboard = computed(() => {
 // Détection mobile pour masquer le Header
 const { isMobile } = useMobile();
 
+// Initialisation du thème global
+const { isDark } = useTheme();
+
 // Condition pour afficher le Header : pas dashboard ET pas mobile
 const showHeader = computed(() => {
   return !isDashboard.value && !isMobile.value;
@@ -48,6 +51,9 @@ useHead({
 
 <template>
   <div>
+    <!-- Splashscreen iOS -->
+    <SplashScreen />
+    
     <!-- Bannière de test PWA (développement uniquement) -->
     <!-- <PWATestBanner /> -->
     

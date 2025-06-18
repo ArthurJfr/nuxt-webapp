@@ -9,6 +9,45 @@
   --error: #{$error};
   --success: #{$success};
   --warning: #{$warning};
+  
+  // Variables de thème par défaut (clair)
+  --bg-primary: #{$gray-50};
+  --bg-secondary: #{$white};
+  --bg-tertiary: #{$gray-100};
+  --bg-card: #{$white};
+  --bg-card-hover: #{$gray-50};
+  --text-primary: #{$gray-900};
+  --text-secondary: #{$gray-700};
+  --text-tertiary: #{$gray-500};
+  --text-muted: #{$gray-400};
+  --border-color: #{$gray-200};
+  --border-light: #{$gray-100};
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-color-strong: rgba(0, 0, 0, 0.15);
+}
+
+// Variables pour le thème sombre iOS
+:root.dark,
+:root.ios-glass {
+  --bg-primary: #000000;
+  --bg-secondary: rgba(28, 28, 30, 0.8);
+  --bg-tertiary: rgba(44, 44, 46, 0.8);
+  --bg-card: rgba(28, 28, 30, 0.7);
+  --bg-card-hover: rgba(44, 44, 46, 0.8);
+  --text-primary: #{$white};
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-light: rgba(255, 255, 255, 0.05);
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --shadow-color-strong: rgba(0, 0, 0, 0.8);
+  
+  // Variables spécifiques glassmorphisme iOS
+  --glass-bg: rgba(28, 28, 30, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass-backdrop: blur(20px) saturate(180%);
 }
 
 
@@ -42,10 +81,220 @@
 }
 
 body {
-  background-color: $gray-100;
+  background: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
-  font-family: system-ui, -apple-system, sans-serif;
-  color: $gray-900;
+  // Support pour iOS safe area et status bar
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// Style glassmorphisme iOS
+.ios-glass body {
+  background: linear-gradient(135deg, 
+    #000000 0%, 
+    #1a1a1a 25%, 
+    #0d1117 50%, 
+    #000000 75%, 
+    #1a1a1a 100%
+  );
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+// Styles spécifiques pour iOS
+@supports (padding-top: env(safe-area-inset-top)) {
+  // Ajustement pour les pages avec padding-top sur iOS
+  .page-container,
+  .settings-page,
+  .profile-page,
+  .home-container {
+    padding-top: calc(2rem + env(safe-area-inset-top, 44px));
+  }
+  
+  // S'assurer que l'overlay iOS fonctionne correctement
+  #ios-status-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: env(safe-area-inset-top, 44px) !important;
+    z-index: 99999 !important;
+    pointer-events: none !important;
+    transition: background-color 0.3s ease !important;
+  }
+}
+
+// Styles pour tous les appareils iOS (avec ou sans safe area)
+.ios-device {
+  body {
+    padding-top: env(safe-area-inset-top, 44px) !important;
+  }
+  
+  .settings-page,
+  .profile-page,
+  .home-container {
+    padding-top: calc(2rem + env(safe-area-inset-top, 44px)) !important;
+  }
+}
+
+// Classes utilitaires pour iOS
+.ios-safe-top {
+  padding-top: env(safe-area-inset-top, 44px) !important;
+}
+
+.ios-safe-content {
+  padding-top: calc(2rem + env(safe-area-inset-top, 44px)) !important;
+}
+
+// Forcer l'affichage mobile sur les appareils mobiles
+.mobile-device,
+.ios-device {
+  // Masquer les éléments desktop
+  .desktop-only {
+    display: none !important;
+  }
+  
+  // Forcer l'affichage mobile
+  .mobile-only {
+    display: block !important;
+  }
+  
+  // S'assurer que les composants prennent toute la largeur
+  .container, .page-container {
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+// Viewport mobile forcé
+.mobile-viewport {
+  // Masquer le header desktop sur mobile
+  .landing-header {
+    display: none !important;
+  }
+  
+  // S'assurer que la mobile bar est visible
+  .simple-mobile-bar {
+    display: flex !important;
+  }
+  
+  // Ajuster tous les contenus pour mobile
+  body {
+    font-size: 16px !important; // Éviter le zoom iOS
+    -webkit-text-size-adjust: 100% !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  // Optimisations tactiles iOS
+  * {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+  }
+  
+  // Buttons et liens optimisés pour le touch
+  button, a, .clickable {
+    min-height: 44px !important; // Taille minimum iOS
+    min-width: 44px !important;
+  }
+}
+
+// Styles globaux utilisant les variables CSS
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+p, span, div {
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+// Classes utilitaires pour les thèmes
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+.bg-card { 
+  background-color: var(--bg-card);
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: var(--bg-card-hover);
+  }
+}
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-muted { color: var(--text-muted); }
+
+.border-theme { border-color: var(--border-color); }
+.border-light-theme { border-color: var(--border-light); }
+
+// Styles pour les cartes et sections - glassmorphisme iOS
+.card, .section, .panel {
+  @include ios-glass-card('medium');
+}
+
+// Style glassmorphisme pour les éléments spécifiques
+.ios-glass {
+  .card, .section, .panel,
+  .settings-section,
+  .profile-content,
+  .form-card {
+    @include ios-glass-card('medium');
+  }
+  
+  // Boutons glassmorphisme
+  button:not(.btn-primary) {
+    @include ios-glass-button;
+  }
+  
+  // Mobile bar glassmorphisme
+  .simple-mobile-bar {
+    @include ios-glass-card('strong');
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+// Styles pour les inputs et formulaires
+input, textarea, select {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+// Styles pour les boutons
+button {
+  transition: all 0.3s ease;
+  
+  &.btn-secondary {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    
+    &:hover {
+      background-color: var(--bg-card-hover);
+    }
+  }
 }
 
 input {
@@ -80,4 +329,11 @@ input {
       text-decoration: underline;
     }
   }
+}
+
+.my-component {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="settings-page">
     <div class="settings-container">
-      <UiPageTitle title="Paramètres" />
+      <PageTitle title="Paramètres" />
       
       <div class="settings-content">
         <!-- Section Compte -->
@@ -36,13 +36,12 @@
           <div class="settings-list">
             <div class="setting-item">
               <div class="setting-info">
-                <div class="setting-label">Mode sombre</div>
-                <div class="setting-description">Basculer entre thème clair et sombre</div>
+                <div class="setting-label">Thème</div>
+                <div class="setting-description">{{ themeDescription }}</div>
               </div>
-              <div class="toggle-switch">
-                <input type="checkbox" id="darkMode" class="toggle-input">
-                <label for="darkMode" class="toggle-label"></label>
-              </div>
+              <UiButton variant="secondary" size="sm" @click="toggleTheme">
+                {{ isDark ? '🌙 Sombre' : '☀️ Clair' }}
+              </UiButton>
             </div>
             
             <div class="setting-item">
@@ -104,10 +103,26 @@
 </template>
 
 <script setup lang="ts">
-const { canInstall, installPWA } = usePWA()
+import { computed } from 'vue'
+
+const { canInstall, installPWA } = usePWADetection()
+const { theme, isDark, toggleTheme } = useTheme()
 
 definePageMeta({
   title: 'Paramètres'
+})
+
+const themeDescription = computed(() => {
+  switch (theme.value) {
+    case 'light':
+      return 'Thème clair activé'
+    case 'dark':
+      return 'Thème sombre activé'
+    case 'auto':
+      return 'Suit les préférences système'
+    default:
+      return 'Thème automatique'
+  }
 })
 
 const handleInstall = async () => {
@@ -125,9 +140,10 @@ const handleInstall = async () => {
 <style lang="scss" scoped>
 .settings-page {
   min-height: 100vh;
-  background: $gray-50;
+  background: var(--bg-primary);
   padding: 2rem 1rem;
   padding-bottom: 120px; // Espace pour la bottom bar
+  transition: background-color 0.3s ease;
 }
 
 .settings-container {
@@ -142,18 +158,21 @@ const handleInstall = async () => {
 }
 
 .settings-section {
-  background: white;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  transition: all 0.3s ease;
 }
 
 .section-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: $gray-900;
+  color: var(--text-primary);
   padding: 1.5rem 1.5rem 1rem;
   margin: 0;
+  transition: color 0.3s ease;
 }
 
 .settings-list {
@@ -166,16 +185,16 @@ const handleInstall = async () => {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid $gray-100;
+  border-bottom: 1px solid var(--border-light);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
 
   &:last-child {
     border-bottom: none;
   }
 
   &:hover {
-    background: $gray-50;
+    background: var(--bg-card-hover);
   }
 
   &.danger {
@@ -195,13 +214,15 @@ const handleInstall = async () => {
 
 .setting-label {
   font-weight: 500;
-  color: $gray-900;
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
 }
 
 .setting-description {
   font-size: 0.85rem;
-  color: $gray-600;
+  color: var(--text-tertiary);
+  transition: color 0.3s ease;
 }
 
 // Toggle Switch
@@ -225,7 +246,7 @@ const handleInstall = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: $gray-300;
+  background-color: var(--border-color);
   transition: 0.3s;
   border-radius: 14px;
 

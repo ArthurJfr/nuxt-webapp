@@ -2,6 +2,7 @@
   <div class="home-container">
     <h1>Hello World</h1>
     <Footer />
+    <IOSDebug />
   </div>
 </template>
 
@@ -14,13 +15,12 @@ import Footer from '~/components/landing/Footer.vue';
 @use "@/assets/scss/variables" as *;
 
 .home-container {
-  min-height: auto;
-  background-color: $white;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
   padding: 2rem;
- //background-image: 
-    //radial-gradient(circle at 20% 20%, rgba($primary, 0.15) 0%, transparent 50%),
-    //radial-gradient(circle at 80% 80%, rgba($primary, 0.1) 0%, transparent 50%);
-  color: $markdown-text;
+  padding-bottom: 120px; // Espace pour la bottom bar mobile
+  color: var(--text-primary);
   font-family: $font-primary;
+  transition: all 0.3s ease;
 }
 </style> 

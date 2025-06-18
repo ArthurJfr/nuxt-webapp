@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header class="header desktop-only landing-header">
     <nav class="nav">
       <Logo to="/" />
       <div class="nav-links">

@@ -86,7 +86,10 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
         { name: 'apple-mobile-web-app-title', content: 'WikiNotes' },
-        { name: 'mobile-web-app-capable', content: 'yes' }
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'theme-color', content: '#2563eb' },
+        { name: 'msapplication-navbutton-color', content: '#2563eb' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0, viewport-fit=cover' }
       ]
     }
   },

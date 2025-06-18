@@ -1,7 +1,7 @@
 <template>
   <div class="profile-page">
     <div class="profile-container">
-      <UiPageTitle title="Profil" />
+      <h1>Profil</h1>
       
       <div class="profile-content">
         <div class="profile-header">
@@ -31,12 +31,12 @@
         </div>
 
         <div class="profile-actions">
-          <UiButton variant="primary" size="lg">
+          <button variant="primary" size="lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
             </svg>
             Modifier le profil
-          </UiButton>
+          </button>
         </div>
       </div>
     </div>
@@ -52,9 +52,10 @@ definePageMeta({
 <style lang="scss" scoped>
 .profile-page {
   min-height: 100vh;
-  background: $gray-50;
+  background: var(--bg-primary);
   padding: 2rem 1rem;
   padding-bottom: 120px; // Espace pour la bottom bar
+  transition: background-color 0.3s ease;
 }
 
 .profile-container {
@@ -63,10 +64,12 @@ definePageMeta({
 }
 
 .profile-content {
-  background: white;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  transition: all 0.3s ease;
 }
 
 .profile-header {
@@ -88,13 +91,15 @@ definePageMeta({
 
 .profile-header h2 {
   font-size: 1.5rem;
-  color: $gray-900;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
 }
 
 .profile-email {
-  color: $gray-600;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
 .profile-stats {
@@ -107,8 +112,15 @@ definePageMeta({
 .stat-item {
   text-align: center;
   padding: 1rem;
-  background: $gray-50;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-light);
   border-radius: 12px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+  }
 }
 
 .stat-value {
@@ -120,7 +132,8 @@ definePageMeta({
 
 .stat-label {
   font-size: 0.8rem;
-  color: $gray-600;
+  color: var(--text-tertiary);
+  transition: color 0.3s ease;
 }
 
 .profile-actions {

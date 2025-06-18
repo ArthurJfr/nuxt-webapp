@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const { isPWA, isMobile, isStandalone, isInstallable, showMobileUI, canInstall, installPWA } = usePWA()
+const { isPWA, isMobile, isStandalone, isInstallable, showMobileUI, canInstall, installPWA } = usePWADetection()
 
 const isDev = process.dev
 const forceShowMobile = ref(false)

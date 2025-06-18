@@ -21,11 +21,14 @@ export const pwaConfig: ModuleOptions = {
     short_name: 'WikiNotes',
     description: 'Application de prise de notes intelligente',
     theme_color: '#2563eb',
-    background_color: '#ffffff',
+    background_color: '#f8fafc',
     display: 'standalone',
     orientation: 'portrait',
     scope: '/',
     start_url: '/',
+    categories: ['productivity', 'utilities'],
+    lang: 'fr',
+    dir: 'ltr',
     icons: [
       {
         src: '/icons/icon-72x72.svg',

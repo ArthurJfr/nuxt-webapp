@@ -1,6 +1,6 @@
 import { ref, computed, onMounted } from 'vue'
 
-export const usePWA = () => {
+export const usePWADetection = () => {
   // État réactif avec valeurs par défaut pour SSR
   const isPWA = ref(false)
   const isMobile = ref(false)
