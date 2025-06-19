@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  faHandshake,
   faSyncAlt,
   faLayerGroup,
   faCloud,
@@ -183,7 +184,19 @@ import {
   faYoutube,
   faTwitter,
   faTwitch,
-  faInstagram
+  faInstagram,
+  faGoogle,
+  faFacebook,
+  faApple,
+  faMicrosoft,
+  faAmazon,
+  faLinkedin,
+  faWhatsapp,
+  faTelegram,
+  faSkype,
+  faViber,
+  faLine
+
 } from '@fortawesome/free-brands-svg-icons'
 
 import {
@@ -192,6 +205,18 @@ import {
 
 // Ajout des icônes à la bibliothèque
 library.add(
+  faHandshake,
+  faAmazon,
+  faGoogle,
+  faFacebook,
+  faApple,
+  faMicrosoft,
+  faLinkedin,
+  faWhatsapp, 
+  faTelegram,
+  faSkype,
+  faViber,
+  faLine,
   faSyncAlt,
   faLayerGroup,
   faCloud,

@@ -15,14 +15,14 @@
           <div class="webapp-bottom-nav__icon">
             <FontAwesomeIcon :icon="item.icon" />
           </div>
-          <span class="webapp-bottom-nav__label">{{ item.label }}</span>
         </NuxtLink>
 
         <!-- Bouton Menu -->
         <button 
           class="webapp-bottom-nav__item webapp-bottom-nav__menu-btn"
           :class="{ 'webapp-bottom-nav__item--active': showMenu }"
-          @click="toggleMenu"
+          @click.stop="toggleMenu"
+          type="button"
         >
           <div class="webapp-bottom-nav__icon">
             <FontAwesomeIcon 
@@ -30,18 +30,27 @@
               :class="{ 'rotate-90': showMenu }"
             />
           </div>
-          <span class="webapp-bottom-nav__label">Plus</span>
         </button>
       </div>
     </div>
 
     <!-- Menu flottant -->
     <Transition name="menu-slide">
-      <div v-if="showMenu" class="webapp-menu-overlay" @click="closeMenu">
-        <div class="webapp-menu" @click.stop>
+      <div 
+        v-if="showMenu" 
+        class="webapp-menu-overlay" 
+        @click="handleOverlayClick"
+        @touchstart="handleOverlayClick"
+      >
+        <div class="webapp-menu" @click.stop @touchstart.stop>
           <div class="webapp-menu__header">
             <h3>Actions fichiers</h3>
-            <button class="webapp-menu__close" @click="closeMenu">
+            <button 
+              class="webapp-menu__close" 
+              @click="forceCloseMenu" 
+              @touchstart="forceCloseMenu"
+              type="button"
+            >
               <FontAwesomeIcon :icon="['fas', 'times']" />
             </button>
           </div>
@@ -69,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 // Composable
@@ -158,11 +167,33 @@ const isActive = (routePath: string) => {
 
 // Gestion du menu
 const toggleMenu = () => {
+  console.log('Toggle menu:', !showMenu.value) // Debug
   showMenu.value = !showMenu.value
 }
 
 const closeMenu = () => {
+  console.log('Fermeture du menu - avant:', showMenu.value) // Debug
   showMenu.value = false
+  console.log('Fermeture du menu - après:', showMenu.value) // Debug
+}
+
+// Force close pour le bouton X
+const forceCloseMenu = (event?: Event) => {
+  if (event) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  console.log('Force close menu') // Debug
+  showMenu.value = false
+}
+
+// Gestion du clic sur l'overlay
+const handleOverlayClick = (event: Event) => {
+  // Vérifier que le clic est bien sur l'overlay et pas sur le menu
+  if (event.target === event.currentTarget) {
+    console.log('Clic sur overlay') // Debug
+    closeMenu()
+  }
 }
 
 const handleAction = (actionName: string) => {
@@ -240,10 +271,32 @@ const syncWithCloud = () => {
   console.log('Synchronisation avec le cloud')
   // Ici vous pourrez ajouter la logique de sync
 }
+
+// Gestion des événements clavier
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && showMenu.value) {
+    console.log('Fermeture par ESC') // Debug
+    forceCloseMenu()
+  }
+}
+
+// Watcher pour debug
+watch(showMenu, (newValue, oldValue) => {
+  console.log('showMenu changed:', oldValue, '->', newValue)
+}, { immediate: true })
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown)
+})
 </script>
 
 <style lang="scss" scoped>
-@import '~/assets/scss/variables.scss';
+@use '~/assets/scss/variables.scss' as *;
 
 .webapp-bottom-nav {
   position: fixed;
@@ -324,14 +377,18 @@ const syncWithCloud = () => {
 }
 
 .webapp-bottom-nav__icon {
-  font-size: 20px;
+  font-size: $mobile-nav-icon-size;
   transition: $glass-transition-fast;
   position: relative;
   z-index: 1;
+  
+  &.rotate-90 {
+    transform: rotate(90deg);
+  }
 }
 
 .webapp-bottom-nav__label {
-  font-size: 12px;
+  font-size: $mobile-nav-label-size;
   font-weight: 500;
   position: relative;
   z-index: 1;
@@ -371,11 +428,11 @@ const syncWithCloud = () => {
   }
   
   .webapp-bottom-nav__icon {
-    font-size: 18px;
+    font-size: $mobile-nav-icon-size-mobile;
   }
   
   .webapp-bottom-nav__label {
-    font-size: 11px;
+    font-size: $mobile-nav-label-size-mobile;
   }
 }
 
@@ -392,7 +449,19 @@ const syncWithCloud = () => {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 0 16px 90px 16px;
+  padding: 0 12px 90px 12px;
+  cursor: pointer;
+  
+  // S'assurer que l'overlay est bien cliquable
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+  }
 }
 
 .webapp-menu {
@@ -401,6 +470,8 @@ const syncWithCloud = () => {
   width: 100%;
   max-width: 400px;
   overflow: hidden;
+  cursor: default;
+  pointer-events: all;
   
   // Ombre moderne
   box-shadow: 
@@ -415,7 +486,7 @@ const syncWithCloud = () => {
     border-bottom: 1px solid $gray-100;
     
     h3 {
-      font-size: 18px;
+      font-size: $mobile-menu-header-size;
       font-weight: 600;
       color: $gray-900;
       font-family: $font-primary;
@@ -476,7 +547,7 @@ const syncWithCloud = () => {
     align-items: center;
     justify-content: center;
     color: $white;
-    font-size: 16px;
+    font-size: $mobile-menu-action-icon-size;
     flex-shrink: 0;
   }
   
@@ -488,14 +559,14 @@ const syncWithCloud = () => {
   }
   
   &__action-title {
-    font-size: 15px;
+    font-size: $mobile-menu-action-title-size;
     font-weight: 600;
     color: $gray-900;
     font-family: $font-primary;
   }
   
   &__action-desc {
-    font-size: 13px;
+    font-size: $mobile-menu-action-desc-size;
     color: $gray-500;
     font-family: $font-primary;
   }
