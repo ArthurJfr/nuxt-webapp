@@ -1,101 +1,66 @@
 <template>
   <div 
     v-if="isMobile"
-    class="simple-mobile-bar"
-    :class="{ 'simple-mobile-bar--dark': isDark }"
+    class="webapp-bottom-nav"
   >
-    <div class="simple-mobile-bar__container">
-      <div class="simple-mobile-bar__nav">
-        <!-- Bouton Accueil -->
+    <div class="webapp-bottom-nav__container glass-card">
+      <div class="webapp-bottom-nav__nav">
         <NuxtLink 
-          to="/" 
-          class="simple-mobile-bar__item"
-          :class="{ 'simple-mobile-bar__item--active': $route.path === '/' }"
+          v-for="item in navItems"
+          :key="item.name"
+          :to="item.route"
+          class="webapp-bottom-nav__item"
+          :class="{ 'webapp-bottom-nav__item--active': isActive(item.route) }"
         >
-          <div class="simple-mobile-bar__icon">
-            <FontAwesomeIcon :icon="['fas', 'home']" />
+          <div class="webapp-bottom-nav__icon">
+            <FontAwesomeIcon :icon="item.icon" />
           </div>
+          <span class="webapp-bottom-nav__label">{{ item.label }}</span>
         </NuxtLink>
 
-        <!-- Bouton Dashboard -->
-        <NuxtLink 
-          to="/dashboard" 
-          class="simple-mobile-bar__item"
-          :class="{ 'simple-mobile-bar__item--active': $route.path.startsWith('/dashboard') }"
-        >
-          <div class="simple-mobile-bar__icon">
-            <FontAwesomeIcon :icon="['fas', 'tachometer-alt']" />
-          </div>
-        </NuxtLink>
-
-        <!-- Bouton Menu/Plus -->
+        <!-- Bouton Menu -->
         <button 
-          class="simple-mobile-bar__item simple-mobile-bar__item--accent"
+          class="webapp-bottom-nav__item webapp-bottom-nav__menu-btn"
+          :class="{ 'webapp-bottom-nav__item--active': showMenu }"
           @click="toggleMenu"
         >
-          <div class="simple-mobile-bar__icon">
+          <div class="webapp-bottom-nav__icon">
             <FontAwesomeIcon 
-              :icon="['fas', 'plus']" 
-              :class="{ 'rotate-45': showMenu }"
+              :icon="['fas', 'ellipsis-h']" 
+              :class="{ 'rotate-90': showMenu }"
             />
           </div>
+          <span class="webapp-bottom-nav__label">Plus</span>
         </button>
-
-        <!-- Bouton Profil -->
-        <NuxtLink 
-          to="/profile" 
-          class="simple-mobile-bar__item"
-          :class="{ 'simple-mobile-bar__item--active': $route.path === '/profile' }"
-        >
-          <div class="simple-mobile-bar__icon">
-            <FontAwesomeIcon :icon="['fas', 'user']" />
-          </div>
-        </NuxtLink>
-
-        <!-- Bouton Paramètres -->
-        <NuxtLink 
-          to="/settings" 
-          class="simple-mobile-bar__item"
-          :class="{ 'simple-mobile-bar__item--active': $route.path === '/settings' }"
-        >
-          <div class="simple-mobile-bar__icon">
-            <FontAwesomeIcon :icon="['fas', 'cog']" />
-          </div>
-        </NuxtLink>
       </div>
     </div>
 
-    <!-- Menu contextuel -->
-    <Transition 
-      name="fade-up"
-      enter-active-class="transition-all duration-300 ease-out"
-      enter-from-class="opacity-0 translate-y-4"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition-all duration-200 ease-in"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 translate-y-4"
-    >
-      <div v-if="showMenu" class="simple-mobile-bar__overlay" @click="closeMenu">
-        <div class="simple-mobile-bar__menu">
-          <div class="simple-mobile-bar__menu-item" @click="handleMenuAction('create')">
-            <div class="simple-mobile-bar__menu-icon">
-              <FontAwesomeIcon :icon="['fas', 'file-alt']" />
-            </div>
-            <span>Créer une note</span>
+    <!-- Menu flottant -->
+    <Transition name="menu-slide">
+      <div v-if="showMenu" class="webapp-menu-overlay" @click="closeMenu">
+        <div class="webapp-menu" @click.stop>
+          <div class="webapp-menu__header">
+            <h3>Actions fichiers</h3>
+            <button class="webapp-menu__close" @click="closeMenu">
+              <FontAwesomeIcon :icon="['fas', 'times']" />
+            </button>
           </div>
           
-          <div class="simple-mobile-bar__menu-item" @click="handleMenuAction('search')">
-            <div class="simple-mobile-bar__menu-icon">
-              <FontAwesomeIcon :icon="['fas', 'search']" />
-            </div>
-            <span>Rechercher</span>
-          </div>
-
-          <div class="simple-mobile-bar__menu-item" @click="handleMenuAction('favorites')">
-            <div class="simple-mobile-bar__menu-icon">
-              <FontAwesomeIcon :icon="['fas', 'star']" />
-            </div>
-            <span>Favoris</span>
+          <div class="webapp-menu__content">
+            <button 
+              v-for="action in menuActions"
+              :key="action.name"
+              class="webapp-menu__action"
+              @click="handleAction(action.name)"
+            >
+              <div class="webapp-menu__action-icon">
+                <FontAwesomeIcon :icon="action.icon" />
+              </div>
+              <div class="webapp-menu__action-text">
+                <span class="webapp-menu__action-title">{{ action.title }}</span>
+                <span class="webapp-menu__action-desc">{{ action.description }}</span>
+              </div>
+            </button>
           </div>
         </div>
       </div>
@@ -104,14 +69,92 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 
-// Utiliser les composables
+// Composable
 const { isMobile } = useMobile()
-const { isDark } = useTheme()
+const route = useRoute()
+const router = useRouter()
 
-// État du menu
+// État
 const showMenu = ref(false)
+
+// Navigation items pour app de partage de fichiers
+const navItems = [
+  {
+    name: 'files',
+    route: '/dashboard',
+    icon: ['fas', 'folder'],
+    label: 'Fichiers'
+  },
+  {
+    name: 'shared',
+    route: '/shared',
+    icon: ['fas', 'share-alt'],
+    label: 'Partagés'
+  },
+  {
+    name: 'recent',
+    route: '/recent',
+    icon: ['fas', 'clock'],
+    label: 'Récents'
+  },
+  {
+    name: 'profile',
+    route: '/profile',
+    icon: ['fas', 'user'],
+    label: 'Profil'
+  }
+]
+
+// Actions du menu pour partage de fichiers
+const menuActions = [
+  {
+    name: 'upload',
+    title: 'Upload fichier',
+    description: 'Ajouter un nouveau fichier',
+    icon: ['fas', 'cloud-upload-alt']
+  },
+  {
+    name: 'create-folder',
+    title: 'Nouveau dossier',
+    description: 'Créer un dossier',
+    icon: ['fas', 'folder-plus']
+  },
+  {
+    name: 'share-link',
+    title: 'Lien de partage',
+    description: 'Créer un lien de partage',
+    icon: ['fas', 'link']
+  },
+  {
+    name: 'collaborate',
+    title: 'Collaborer',
+    description: 'Inviter des collaborateurs',
+    icon: ['fas', 'user-plus']
+  },
+  {
+    name: 'sync',
+    title: 'Synchroniser',
+    description: 'Sync avec le cloud',
+    icon: ['fas', 'sync-alt']
+  },
+  {
+    name: 'settings',
+    title: 'Paramètres',
+    description: 'Gérer les paramètres',
+    icon: ['fas', 'cog']
+  }
+]
+
+// Vérifier si une route est active
+const isActive = (routePath: string) => {
+  if (routePath === '/dashboard') {
+    return route.path === '/' || route.path === '/dashboard'
+  }
+  return route.path.startsWith(routePath)
+}
 
 // Gestion du menu
 const toggleMenu = () => {
@@ -122,428 +165,431 @@ const closeMenu = () => {
   showMenu.value = false
 }
 
-const handleMenuAction = (action: string) => {
-  console.log(`Action: ${action}`)
+const handleAction = (actionName: string) => {
+  console.log(`Action fichier: ${actionName}`)
   closeMenu()
   
-  // Ici vous pouvez ajouter la logique pour chaque action
-  switch (action) {
-    case 'create':
-      // Naviguer vers la création de note ou ouvrir un modal
+  // Logique pour app de partage de fichiers
+  switch (actionName) {
+    case 'upload':
+      // Ouvrir le sélecteur de fichiers
+      triggerFileUpload()
       break
-    case 'search':
-      // Ouvrir la recherche
+    case 'create-folder':
+      // Créer un nouveau dossier
+      createNewFolder()
       break
-    case 'favorites':
-      // Naviguer vers les favoris
+    case 'share-link':
+      // Générer un lien de partage
+      generateShareLink()
       break
+    case 'collaborate':
+      // Inviter des collaborateurs
+      inviteCollaborators()
+      break
+    case 'sync':
+      // Synchroniser avec le cloud
+      syncWithCloud()
+      break
+    case 'settings':
+      // Naviguer vers les paramètres
+      router.push('/settings')
+      break
+    default:
+      console.log(`Action non implémentée: ${actionName}`)
   }
+}
+
+// Fonctions spécifiques au partage de fichiers
+const triggerFileUpload = () => {
+  // Créer un input file invisible et le déclencher
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.multiple = true
+  input.accept = '*/*'
+  input.onchange = (event) => {
+    const files = (event.target as HTMLInputElement).files
+    if (files) {
+      console.log('Fichiers sélectionnés:', files)
+      // Ici vous pourrez ajouter la logique d'upload
+    }
+  }
+  input.click()
+}
+
+const createNewFolder = () => {
+  // Logique pour créer un nouveau dossier
+  console.log('Création d\'un nouveau dossier')
+  // Ici vous pourrez ajouter un modal ou une popup
+}
+
+const generateShareLink = () => {
+  // Logique pour générer un lien de partage
+  console.log('Génération d\'un lien de partage')
+  // Ici vous pourrez ajouter la logique de partage
+}
+
+const inviteCollaborators = () => {
+  // Logique pour inviter des collaborateurs
+  console.log('Invitation de collaborateurs')
+  // Ici vous pourrez ajouter un modal d'invitation
+}
+
+const syncWithCloud = () => {
+  // Logique de synchronisation
+  console.log('Synchronisation avec le cloud')
+  // Ici vous pourrez ajouter la logique de sync
 }
 </script>
 
 <style lang="scss" scoped>
-.simple-mobile-bar {
+@import '~/assets/scss/variables.scss';
+
+.webapp-bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 0 16px;
-  padding-bottom: env(safe-area-inset-bottom, 16px);
-  
-  &__container {
-    // Thème clair par défaut
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.9) 0%, 
-      rgba(255, 255, 255, 0.7) 100%);
-    backdrop-filter: blur(25px) saturate(1.8) brightness(1.1);
-    -webkit-backdrop-filter: blur(25px) saturate(1.8) brightness(1.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.15),
-      0 8px 25px rgba(0, 0, 0, 0.1),
-      0 3px 10px rgba(0, 0, 0, 0.08),
-      inset 0 2px 0 rgba(255, 255, 255, 0.8),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-    
-    border-radius: 28px;
-    margin-bottom: 16px;
-    overflow: visible;
-    position: relative;
-    animation: slideUpGlass 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    
-    // Effet de réflexion
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 50%;
-      background: linear-gradient(180deg, 
-        rgba(255, 255, 255, 0.1) 0%, 
-        transparent 100%);
-      border-radius: inherit;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      pointer-events: none;
-    }
-  }
-  
-  // Thème sombre
-  &--dark &__container {
-    background: linear-gradient(135deg, 
-      rgba(30, 41, 59, 0.9) 0%, 
-      rgba(15, 23, 42, 0.7) 100%);
-    backdrop-filter: blur(25px) saturate(1.8) brightness(0.9);
-    -webkit-backdrop-filter: blur(25px) saturate(1.8) brightness(0.9);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.6),
-      0 8px 25px rgba(0, 0, 0, 0.4),
-      0 3px 10px rgba(0, 0, 0, 0.3),
-      inset 0 2px 0 rgba(255, 255, 255, 0.15),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.08);
-      
-    &::after {
-      background: linear-gradient(180deg, 
-        rgba(255, 255, 255, 0.05) 0%, 
-        transparent 100%);
-    }
-  }
-  
-  &__nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 12px 8px;
-    min-height: 64px;
-  }
-  
-  &__item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px;
-    border-radius: 22px;
-    text-decoration: none;
-    color: $gray-600;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    min-width: 52px;
-    min-height: 52px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    
-    // Effet de survol avec glassmorphisme
-    &:hover {
-      background: linear-gradient(135deg, 
-        rgba(37, 99, 235, 0.15) 0%, 
-        rgba(37, 99, 235, 0.08) 100%);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(37, 99, 235, 0.2);
-      color: $primary;
-      transform: scale(1.1) translateY(-2px);
-      box-shadow: 
-        0 8px 25px rgba(37, 99, 235, 0.2),
-        0 3px 10px rgba(37, 99, 235, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-    
-    // État actif avec glassmorphisme renforcé
-    &--active {
-      color: $primary;
-      background: linear-gradient(135deg, 
-        rgba(37, 99, 235, 0.25) 0%, 
-        rgba(37, 99, 235, 0.12) 100%);
-      backdrop-filter: blur(15px) saturate(1.5);
-      -webkit-backdrop-filter: blur(15px) saturate(1.5);
-      border: 1px solid rgba(37, 99, 235, 0.3);
-      box-shadow: 
-        0 6px 20px rgba(37, 99, 235, 0.25),
-        0 2px 8px rgba(37, 99, 235, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -1px 0 rgba(37, 99, 235, 0.1);
-      
-      .simple-mobile-bar__icon {
-        transform: scale(1.15);
-      }
-    }
-    
-    // Bouton accent (Plus) avec effet glassmorphisme premium
-    &--accent {
-      background: linear-gradient(135deg, 
-        rgba(37, 99, 235, 0.9) 0%, 
-        rgba(59, 130, 246, 0.8) 50%,
-        rgba(37, 99, 235, 0.9) 100%);
-      backdrop-filter: blur(20px) saturate(1.8);
-      -webkit-backdrop-filter: blur(20px) saturate(1.8);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      box-shadow: 
-        0 8px 32px rgba(37, 99, 235, 0.4),
-        0 4px 16px rgba(37, 99, 235, 0.3),
-        0 1px 4px rgba(37, 99, 235, 0.2),
-        inset 0 2px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -1px 0 rgba(37, 99, 235, 0.2);
-      
-      // Effet de pulsation subtile
-      animation: pulseGlow 3s ease-in-out infinite;
-      
-      &:hover {
-        background: linear-gradient(135deg, 
-          rgba(29, 78, 216, 0.95) 0%, 
-          rgba(37, 99, 235, 0.85) 50%,
-          rgba(29, 78, 216, 0.95) 100%);
-        transform: scale(1.15) translateY(-3px);
-        box-shadow: 
-          0 12px 40px rgba(37, 99, 235, 0.5),
-          0 6px 20px rgba(37, 99, 235, 0.4),
-          0 2px 8px rgba(37, 99, 235, 0.3),
-          inset 0 2px 0 rgba(255, 255, 255, 0.5),
-          inset 0 -1px 0 rgba(29, 78, 216, 0.3);
-      }
-    }
-    
+  padding: $spacing-sm;
+  background: transparent;
+  pointer-events: none;
+}
 
+.webapp-bottom-nav__container {
+  @extend %glass-card-base;
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: $radius-2xl;
+  padding: $spacing-sm;
+  pointer-events: all;
+  background: $glass-bg-primary;
+  backdrop-filter: $glass-blur-strong;
+  -webkit-backdrop-filter: $glass-blur-strong;
+  border: 1px solid $glass-border-primary;
+  box-shadow: $glass-shadow-medium;
+}
+
+.webapp-bottom-nav__nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.webapp-bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: $spacing-sm;
+  border-radius: $radius-md;
+  text-decoration: none;
+  transition: $glass-transition-fast;
+  color: $gray-500;
+  min-width: 64px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $glass-bg-secondary;
+    border-radius: $radius-md;
+    opacity: 0;
+    transition: $glass-transition-fast;
   }
   
-  // Styles pour le thème sombre des items
-  &--dark &__item {
-    color: $gray-300;
-    
-    &:hover {
-      background: linear-gradient(135deg, 
-        rgba(96, 165, 250, 0.2) 0%, 
-        rgba(96, 165, 250, 0.1) 100%);
-      border: 1px solid rgba(96, 165, 250, 0.25);
-      color: $primary-light;
-      box-shadow: 
-        0 8px 25px rgba(96, 165, 250, 0.25),
-        0 3px 10px rgba(96, 165, 250, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-    
-    &--active {
-      color: $primary-light;
-      background: linear-gradient(135deg, 
-        rgba(96, 165, 250, 0.3) 0%, 
-        rgba(96, 165, 250, 0.15) 100%);
-      border: 1px solid rgba(96, 165, 250, 0.35);
-      box-shadow: 
-        0 6px 20px rgba(96, 165, 250, 0.3),
-        0 2px 8px rgba(96, 165, 250, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -1px 0 rgba(96, 165, 250, 0.15);
-    }
-    
-    &--accent {
-      background: linear-gradient(135deg, 
-        rgba(96, 165, 250, 0.9) 0%, 
-        rgba(59, 130, 246, 0.8) 50%,
-        rgba(96, 165, 250, 0.9) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      
-      &:hover {
-        background: linear-gradient(135deg, 
-          rgba(59, 130, 246, 0.95) 0%, 
-          rgba(96, 165, 250, 0.85) 50%,
-          rgba(59, 130, 246, 0.95) 100%);
-      }
-    }
-  }
-  
-  &__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    font-size: 24px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-    
-    .rotate-45 {
-      transform: rotate(45deg);
-    }
-  }
-
-  // Styles pour le menu contextuel
-  &__overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 120px; // Espace pour la bottom bar
-  }
-
-  &__menu {
-    // ✅ Propriétés de base d'abord
-    border-radius: 28px;
-    padding: 20px;
-    margin: 0 20px;
-    min-width: 300px;
-    animation: menuSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    
-    // ✅ Mixin sans media queries
-    @include glassmorphism-floating-light('strong');
-  }
-  
-  // ✅ Thème sombre séparé
-  &--dark &__menu {
-    @include glassmorphism-floating-dark('strong');
-  }
-
-  &__menu-item {
-    display: flex;
-    align-items: center;
-    padding: 18px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  &:hover {
     color: $gray-700;
-    position: relative;
+    transform: translateY(-1px);
     
-    // Effet de survol avec glassmorphisme
-    &:hover {
-      background: linear-gradient(135deg, 
-        rgba(37, 99, 235, 0.15) 0%, 
-        rgba(37, 99, 235, 0.08) 100%);
-      backdrop-filter: blur(10px) saturate(1.5);
-      -webkit-backdrop-filter: blur(10px) saturate(1.5);
-      border: 1px solid rgba(37, 99, 235, 0.2);
-      color: $primary;
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 
-        0 8px 25px rgba(37, 99, 235, 0.2),
-        0 3px 10px rgba(37, 99, 235, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    &::before {
+      opacity: 1;
     }
-    
-    &:not(:last-child) {
-      margin-bottom: 12px;
-    }
-    
-    span {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-    
-
   }
   
-  // Styles pour le thème sombre du menu
-  &--dark &__menu-item {
-    color: $gray-200;
+  &--active {
+    color: $primary;
     
-    &:hover {
-      background: linear-gradient(135deg, 
-        rgba(96, 165, 250, 0.2) 0%, 
-        rgba(96, 165, 250, 0.1) 100%);
-      border: 1px solid rgba(96, 165, 250, 0.25);
-      color: $primary-light;
-      box-shadow: 
-        0 8px 25px rgba(96, 165, 250, 0.25),
-        0 3px 10px rgba(96, 165, 250, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    &::before {
+      opacity: 1;
+      background: rgba($primary, 0.1);
+    }
+    
+    .webapp-bottom-nav__icon {
+      transform: scale(1.1);
     }
   }
-
-  &__menu-icon {
-    width: 24px;
-    height: 24px;
-    font-size: 20px;
-    margin-right: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: inherit;
-  }
 }
 
-// Animations keyframes
-@keyframes slideUpGlass {
-  0% {
+.webapp-bottom-nav__icon {
+  font-size: 20px;
+  transition: $glass-transition-fast;
+  position: relative;
+  z-index: 1;
+}
+
+.webapp-bottom-nav__label {
+  font-size: 12px;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+// Animation d'entrée
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
     opacity: 0;
-    transform: translateY(100px) scale(0.9);
-    backdrop-filter: blur(0px);
   }
-  60% {
-    opacity: 0.8;
-    transform: translateY(-10px) scale(1.02);
-  }
-  100% {
+  to {
+    transform: translateY(0);
     opacity: 1;
-    transform: translateY(0) scale(1);
-    backdrop-filter: blur(25px);
   }
 }
 
-@keyframes menuSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-    backdrop-filter: blur(0px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    backdrop-filter: blur(30px);
-  }
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 
-      0 8px 32px rgba(37, 99, 235, 0.4),
-      0 4px 16px rgba(37, 99, 235, 0.3),
-      0 1px 4px rgba(37, 99, 235, 0.2),
-      inset 0 2px 0 rgba(255, 255, 255, 0.4),
-      inset 0 -1px 0 rgba(37, 99, 235, 0.2);
-  }
-  50% {
-    box-shadow: 
-      0 12px 40px rgba(37, 99, 235, 0.5),
-      0 6px 20px rgba(37, 99, 235, 0.4),
-      0 2px 8px rgba(37, 99, 235, 0.3),
-      inset 0 2px 0 rgba(255, 255, 255, 0.5),
-      inset 0 -1px 0 rgba(37, 99, 235, 0.3);
-  }
+.webapp-bottom-nav {
+  animation: slideUp 0.3s ease-out;
 }
 
 // Responsive
-@media (max-width: 768px) {
-  .simple-mobile-bar {
-    display: block;
+@media (max-width: $mobile) {
+  .webapp-bottom-nav {
+    padding: $spacing-xs;
+  }
+  
+  .webapp-bottom-nav__container {
+    max-width: none;
+    margin: 0 $spacing-xs;
+  }
+  
+  .webapp-bottom-nav__item {
+    min-width: 56px;
+    padding: $spacing-xs;
+  }
+  
+  .webapp-bottom-nav__icon {
+    font-size: 18px;
+  }
+  
+  .webapp-bottom-nav__label {
+    font-size: 11px;
   }
 }
 
-@media (min-width: 769px) {
-  .simple-mobile-bar {
-    display: none;
+// Menu flottant
+.webapp-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1001;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 16px 90px 16px;
+}
+
+.webapp-menu {
+  background: $white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  
+  // Ombre moderne
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.1);
+  
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px 24px;
+    border-bottom: 1px solid $gray-100;
+    
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: $gray-900;
+      font-family: $font-primary;
+      margin: 0;
+    }
+  }
+  
+  &__close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: $gray-100;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $gray-600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: $gray-200;
+      color: $gray-700;
+    }
+  }
+  
+  &__content {
+    padding: 8px 0 16px 0;
+  }
+  
+  &__action {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 16px 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    
+    &:hover {
+      background: $gray-50;
+    }
+    
+    &:active {
+      background: $gray-100;
+    }
+  }
+  
+  &__action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  
+  &__action-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  &__action-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: $gray-900;
+    font-family: $font-primary;
+  }
+  
+  &__action-desc {
+    font-size: 13px;
+    color: $gray-500;
+    font-family: $font-primary;
   }
 }
 
-// Amélioration pour les écrans haute résolution
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .simple-mobile-bar {
+// Animations
+.menu-slide-enter-active,
+.menu-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-slide-enter-from {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.menu-slide-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.menu-slide-enter-active .webapp-menu,
+.menu-slide-leave-active .webapp-menu {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-slide-enter-from .webapp-menu {
+  transform: translateY(100px);
+}
+
+.menu-slide-leave-to .webapp-menu {
+  transform: translateY(100px);
+}
+
+// Mode sombre (optionnel)
+@media (prefers-color-scheme: dark) {
+  .webapp-bottom-nav {
     &__container {
-      backdrop-filter: blur(30px) saturate(1.8) brightness(1.1);
-      -webkit-backdrop-filter: blur(30px) saturate(1.8) brightness(1.1);
+      background: rgba($gray-900, 0.95);
+      border-top-color: rgba($gray-700, 0.8);
+    }
+    
+    &__item {
+      color: $gray-400;
+      
+      &:hover {
+        background: rgba($primary, 0.15);
+        color: $primary-light;
+      }
+      
+      &--active {
+        color: $primary-light;
+        background: rgba($primary, 0.2);
+      }
+    }
+  }
+  
+  .webapp-menu {
+    background: $gray-800;
+    
+    &__header {
+      border-bottom-color: $gray-700;
+      
+      h3 {
+        color: $white;
+      }
+    }
+    
+    &__close {
+      background: $gray-700;
+      color: $gray-300;
+      
+      &:hover {
+        background: $gray-600;
+        color: $white;
+      }
+    }
+    
+    &__action {
+      &:hover {
+        background: $gray-700;
+      }
+      
+      &:active {
+        background: $gray-600;
+      }
+    }
+    
+    &__action-title {
+      color: $white;
+    }
+    
+    &__action-desc {
+      color: $gray-400;
     }
   }
 }

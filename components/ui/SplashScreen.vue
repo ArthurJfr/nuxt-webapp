@@ -1,6 +1,6 @@
 <template>
   <Transition name="splash" appear>
-    <div v-if="showSplash" class="splash-screen">
+    <div class="splash-screen">
       <div class="splash-content">
         <!-- Logo animé -->
         <div class="splash-logo">
@@ -17,7 +17,7 @@
             <div class="logo-glow"></div>
           </div>
           <h1 class="app-name">WikiNotes</h1>
-          <p class="app-tagline">Vos notes, simplifiées</p>
+          <p class="app-tagline">{{ loadingText }}</p>
         </div>
 
         <!-- Indicateur de chargement -->
@@ -39,13 +39,24 @@
 </template>
 
 <script setup lang="ts">
-const showSplash = ref(true)
+// Props pour personnaliser le texte de chargement
+interface Props {
+  loadingType?: 'initial' | 'navigation' | 'reload'
+}
 
-// Masquer le splashscreen après 2.5 secondes
-onMounted(() => {
-  setTimeout(() => {
-    showSplash.value = false
-  }, 2500)
+const props = withDefaults(defineProps<Props>(), {
+  loadingType: 'initial'
+})
+
+// Textes de chargement selon le type
+const loadingTexts = {
+  initial: 'Vos notes, simplifiées',
+  navigation: 'Navigation en cours...',
+  reload: 'Rechargement...'
+}
+
+const loadingText = computed(() => {
+  return loadingTexts[props.loadingType] || loadingTexts.initial
 })
 
 // Générer des styles aléatoires pour les particules

@@ -1,9 +1,21 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  faSyncAlt,
+  faLayerGroup,
   faCloud,
   faTh,
-
+  faShareAlt,
+  faShareSquare,
+  faShareAltSquare,
+  faFileAudio,
+  faFileVideo,
+  faFileImage,
+  faFilePdf,
+  faFileWord,
+  faFileExcel,
+  faFilePowerpoint,
+  faFileText,
   faCloudUploadAlt,
   faSquareBinary,
   faCompressArrowsAlt,
@@ -180,10 +192,18 @@ import {
 
 // Ajout des icônes à la bibliothèque
 library.add(
+  faSyncAlt,
+  faLayerGroup,
   faCloud,
   faTh,
   faList,
-
+  faShareAlt,
+  faShareSquare,
+  faShareAltSquare,
+  faFileAudio,
+  faFileVideo,
+  faFileImage,
+  faFilePdf,
   faCloudUploadAlt,
   faSquareBinary,
   faCompressArrowsAlt,

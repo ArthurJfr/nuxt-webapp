@@ -2,7 +2,6 @@
 import Header from './components/landing/Header.vue';
 // import MobileBottomBar from './components/ui/MobileBottomBar.vue';
 import SimpleMobileBar from './components/ui/SimpleMobileBar.vue';
-// import PWATestBanner from './components/ui/PWATestBanner.vue';
 import { useRoute } from 'nuxt/app';
 import { computed } from 'vue';
 import { useHead } from 'nuxt/app';
@@ -17,6 +16,9 @@ const { isMobile } = useMobile();
 
 // Initialisation du thème global
 const { isDark } = useTheme();
+
+// Système de splashscreen global
+const { isVisible: showSplash, loadingType, showForInitialLoad, showForReload } = useSplashScreen();
 
 // Condition pour afficher le Header : pas dashboard ET pas mobile
 const showHeader = computed(() => {
@@ -35,15 +37,33 @@ const cleanupWebGL = () => {
   });
 }
 
+// Gestion du chargement initial
+onMounted(async () => {
+  // Détecter si c'est un rechargement ou un chargement initial
+  const isReload = sessionStorage.getItem('app-loaded') === 'true';
+  
+  if (isReload) {
+    await showForReload();
+  } else {
+    await showForInitialLoad();
+    sessionStorage.setItem('app-loaded', 'true');
+  }
+});
+
+// Nettoyer au démontage
+onBeforeUnmount(() => {
+  sessionStorage.removeItem('app-loaded');
+});
+
 // Configuration PWA
 useHead({
   link: [
     { rel: 'manifest', href: '/manifest.json' }
   ],
   meta: [
-    { name: 'theme-color', content: '#ffffff' },
+    { name: 'theme-color', content: '#000000' },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
-    { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+    { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
     { name: 'apple-mobile-web-app-title', content: 'WikiNotes' }
   ]
 })
@@ -51,28 +71,31 @@ useHead({
 
 <template>
   <div>
-    <!-- Splashscreen iOS -->
-    <SplashScreen />
+    <!-- Splashscreen global - s'affiche pour tous les chargements -->
+    <SplashScreen v-show="showSplash" :loading-type="loadingType" :key="'global-splash'" />
     
-    <!-- Bannière de test PWA (développement uniquement) -->
-    <!-- <PWATestBanner /> -->
-    
-    <Header v-if="showHeader" />
-    <NuxtLayout>
-      <NuxtPage :transition="{
-        name: 'page-transition',
-        mode: 'out-in',
-        onBeforeLeave: cleanupWebGL
-      }" />
-    </NuxtLayout>
-    <!-- Barre de navigation mobile PWA -->
-    <ClientOnly>
-      <SimpleMobileBar />
-    </ClientOnly>
+    <!-- Application principale -->
+    <div v-show="!showSplash" class="app-container">
+      <Header v-if="showHeader" />
+      <NuxtLayout>
+        <NuxtPage :transition="{
+          name: 'page-transition',
+          mode: 'out-in',
+          onBeforeLeave: cleanupWebGL
+        }" />
+      </NuxtLayout>
+      <!-- Barre de navigation mobile PWA -->
+      <ClientOnly>
+        <SimpleMobileBar />
+      </ClientOnly>
+    </div>
   </div>
 </template>
 
 <style>
+/* Préchargement des polices critiques */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .page-transition-enter-active,
 .page-transition-leave-active {
   transition: opacity 0.15s ease;
@@ -81,6 +104,41 @@ useHead({
 .page-transition-enter-from,
 .page-transition-leave-to {
   opacity: 0;
+}
+
+/* Transition fluide pour l'application après le splashscreen */
+.app-container {
+  animation: appFadeIn 0.8s ease-out;
+}
+
+@keyframes appFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optimisation pour les navigations rapides */
+.splash-enter-active {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.splash-leave-active {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.splash-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.splash-leave-to {
+  opacity: 0;
+  transform: scale(1.05);
 }
 
 /* Ajustement global pour le contenu mobile avec bottom bar */
@@ -93,5 +151,38 @@ useHead({
   main, .nuxt-page, [data-nuxt-page] {
     padding-bottom: 100px;
   }
+}
+
+/* Optimisation pour PWA - éviter le flash de contenu */
+body {
+  background-color: #000000;
+  overflow-x: hidden;
+}
+
+/* Animation spéciale pour les chargements de navigation */
+.navigation-loading .splash-screen {
+  animation: quickFadeIn 0.4s ease-out;
+}
+
+@keyframes quickFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optimisation des performances */
+.splash-screen * {
+  will-change: transform, opacity;
+}
+
+/* Désactiver les interactions pendant le chargement */
+.splash-screen {
+  pointer-events: none;
+  user-select: none;
 }
 </style>

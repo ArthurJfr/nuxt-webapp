@@ -21,7 +21,7 @@ export const pwaConfig: ModuleOptions = {
     short_name: 'WikiNotes',
     description: 'Application de prise de notes intelligente',
     theme_color: '#2563eb',
-    background_color: '#f8fafc',
+    background_color: '#000000',
     display: 'standalone',
     orientation: 'portrait',
     scope: '/',
@@ -29,6 +29,7 @@ export const pwaConfig: ModuleOptions = {
     categories: ['productivity', 'utilities'],
     lang: 'fr',
     dir: 'ltr',
+    splash_pages: null,
     icons: [
       {
         src: '/icons/icon-72x72.svg',
@@ -58,7 +59,8 @@ export const pwaConfig: ModuleOptions = {
       {
         src: '/icons/icon-192x192.svg',
         sizes: '192x192',
-        type: 'image/svg+xml'
+        type: 'image/svg+xml',
+        purpose: 'any maskable'
       },
       {
         src: '/icons/icon-384x384.svg',
@@ -68,7 +70,8 @@ export const pwaConfig: ModuleOptions = {
       {
         src: '/icons/icon-512x512.svg',
         sizes: '512x512',
-        type: 'image/svg+xml'
+        type: 'image/svg+xml',
+        purpose: 'any maskable'
       }
     ]
   }

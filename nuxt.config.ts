@@ -5,7 +5,7 @@ import { pwaConfig } from './pwa.config'
 dotenvConfig() 
 
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   
   // Configuration serveur pour le développement
   devServer: {
