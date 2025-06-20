@@ -89,7 +89,7 @@ export default defineNuxtConfig({
         { name: 'mobile-web-app-capable', content: 'yes' },
         { name: 'theme-color', content: '#2563eb' },
         { name: 'msapplication-navbutton-color', content: '#2563eb' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1.0, viewport-fit=cover' }
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' }
       ]
     }
   },

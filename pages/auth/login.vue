@@ -4,7 +4,7 @@
     <div class="login-background">
       <!-- Particules flottantes -->
       <div class="login-particles">
-        <div v-for="i in 15" :key="i" class="particle" :style="getParticleStyle(i)"></div>
+        <div v-for="i in 20" :key="i" class="particle" :style="getParticleStyle(i)"></div>
       </div>
       
       <!-- Formes géométriques flottantes -->
@@ -12,6 +12,7 @@
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
         <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
       </div>
       
       <!-- Gradient overlay -->
@@ -19,12 +20,14 @@
     </div>
 
     <div class="login-container">
+      <!-- Section de gauche - Branding et informations -->
+      <div class="login-left">
+        <div class="branding-section">
       <!-- Logo et titre principal -->
-      <div class="login-header">
         <div class="logo-container">
           <div class="logo-glass">
             <div class="logo-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                 <circle cx="12" cy="13" r="2"/>
                 <path d="M12 10v6"/>
@@ -37,13 +40,53 @@
         </div>
         
         <h1 class="login-title">Bienvenue sur FileShare</h1>
-        <p class="login-subtitle">Connectez-vous pour accéder à votre espace collaboratif</p>
+          <p class="login-subtitle">La plateforme collaborative qui transforme votre façon de travailler en équipe</p>
+          
+          <!-- Stats en temps réel -->
+          <div class="live-stats">
+            <div class="stat-item glass-card-mini">
+              <div class="stat-number">{{ liveStats.activeUsers }}</div>
+              <div class="stat-label">Utilisateurs connectés</div>
+              <div class="live-indicator"></div>
+            </div>
+            <div class="stat-item glass-card-mini">
+              <div class="stat-number">{{ liveStats.filesShared }}</div>
+              <div class="stat-label">Fichiers partagés</div>
+            </div>
+            <div class="stat-item glass-card-mini">
+              <div class="stat-number">{{ liveStats.activeTeams }}</div>
+              <div class="stat-label">Équipes actives</div>
+              <div class="live-indicator"></div>
+            </div>
+          </div>
       </div>
 
-      <!-- Formulaire de connexion -->
-      <div class="login-form-container glass-card-enhanced">
+        <!-- Features rapides -->
+        <div class="login-features">
+          <div class="features-header">
+            <h3 class="features-title">Pourquoi choisir FileShare ?</h3>
+          </div>
+          <div class="features-grid">
+            <div class="feature-item glass-card" v-for="feature in features" :key="feature.id">
+              <div class="feature-icon" :style="{ backgroundColor: feature.color }">
+                <FontAwesomeIcon :icon="feature.icon" />
+              </div>
+              <div class="feature-content">
+                <h4 class="feature-title">{{ feature.title }}</h4>
+                <p class="feature-description">{{ feature.description }}</p>
+              </div>
+              <div class="feature-shine"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section de droite - Formulaire de connexion -->
+      <div class="login-right">
+        <Card type="auth-card" class="form-wrapper">
         <div class="form-header">
-          <h2 class="form-title">Connexion</h2>
+            <h2 class="form-title">Se connecter</h2>
+            <p class="form-subtitle">Accédez à votre espace collaboratif</p>
         </div>
         
         <form @submit.prevent="handleLogin" class="login-form">
@@ -86,9 +129,16 @@
                 <FontAwesomeIcon :icon="['fas', showPassword ? 'eye-slash' : 'eye']" />
               </button>
             </div>
+              <div class="form-options">
+                <label class="remember-me glass-checkbox">
+                  <input type="checkbox" v-model="form.rememberMe">
+                  <span class="checkmark"></span>
+                  <span class="checkbox-label">Se souvenir de moi</span>
+                </label>
             <NuxtLink to="/auth/reset-password" class="forgot-password">
               Mot de passe oublié ?
             </NuxtLink>
+              </div>
           </div>
 
           <div class="form-actions">
@@ -99,7 +149,7 @@
             >
               <div class="btn-content">
                 <FontAwesomeIcon :icon="['fas', isLoading ? 'spinner' : 'sign-in-alt']" :class="{ 'fa-spin': isLoading }" />
-                <span>{{ isLoading ? 'Connexion...' : 'Se connecter' }}</span>
+                  <span>{{ isLoading ? 'Connexion en cours...' : 'Se connecter' }}</span>
               </div>
               <div class="btn-shine"></div>
             </button>
@@ -110,39 +160,56 @@
           <div class="divider">
             <span>ou</span>
           </div>
+            
+            <!-- Connexion sociale -->
+            <div class="social-login">
+              <button class="btn btn-social glass-btn" type="button">
+                <div class="btn-content">
+                  <FontAwesomeIcon :icon="['fab', 'google']" />
+                  <span>Continuer avec Google</span>
+                </div>
+                <div class="btn-shine"></div>
+              </button>
+              <button class="btn btn-social glass-btn" type="button">
+                <div class="btn-content">
+                  <FontAwesomeIcon :icon="['fab', 'microsoft']" />
+                  <span>Continuer avec Microsoft</span>
+                </div>
+                <div class="btn-shine"></div>
+              </button>
+            </div>
           
           <div class="register-section">
-            <p class="register-text">Pas encore de compte ?</p>
+              <p class="register-text">Vous n'avez pas encore de compte ?</p>
             <NuxtLink to="/auth/register" class="btn btn-secondary glass-btn">
               <div class="btn-content">
                 <FontAwesomeIcon :icon="['fas', 'user-plus']" />
-                <span>Créer un compte</span>
+                  <span>Créer un compte gratuitement</span>
               </div>
               <div class="btn-shine"></div>
             </NuxtLink>
           </div>
         </div>
-        
-        <div class="card-shine"></div>
-      </div>
+                  </Card>
 
-      <!-- Features rapides -->
-      <div class="login-features">
-        <div class="feature-item glass-card" v-for="feature in features" :key="feature.id">
-          <div class="feature-icon" :style="{ backgroundColor: feature.color }">
-            <FontAwesomeIcon :icon="feature.icon" />
-          </div>
-          <h3 class="feature-title">{{ feature.title }}</h3>
-          <p class="feature-description">{{ feature.description }}</p>
-          <div class="feature-shine"></div>
-        </div>
+        <!-- Liens rapides -->
+        <div class="quick-links">
+          <NuxtLink to="/" class="quick-link">
+            <FontAwesomeIcon :icon="['fas', 'home']" />
+            <span>Retour à l'accueil</span>
+          </NuxtLink>
+          <NuxtLink to="/support" class="quick-link">
+            <FontAwesomeIcon :icon="['fas', 'life-ring']" />
+            <span>Besoin d'aide ?</span>
+          </NuxtLink>
+      </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 
 // Meta tags
 useHead({
@@ -157,7 +224,15 @@ const isLoading = ref(false)
 const showPassword = ref(false)
 const form = reactive({
   email: '',
-  password: ''
+  password: '',
+  rememberMe: false
+})
+
+// Stats en temps réel
+const liveStats = ref({
+  activeUsers: '2.4K',
+  filesShared: '847',
+  activeTeams: '156'
 })
 
 // Features de la plateforme
@@ -165,34 +240,57 @@ const features = [
   {
     id: 1,
     title: 'Collaboration temps réel',
-    description: 'Travaillez ensemble instantanément',
+    description: 'Travaillez ensemble instantanément sur vos documents',
     icon: ['fas', 'users'],
     color: '#3B82F6'
   },
   {
     id: 2,
-    title: 'Partage sécurisé',
-    description: 'Contrôlez vos permissions',
+    title: 'Sécurité avancée',
+    description: 'Vos données protégées avec un chiffrement de bout en bout',
     icon: ['fas', 'shield-alt'],
     color: '#10B981'
   },
   {
     id: 3,
-    title: 'Synchronisation',
-    description: 'Accès partout, tout le temps',
+    title: 'Synchronisation intelligente',
+    description: 'Accédez à vos fichiers partout, sur tous vos appareils',
     icon: ['fas', 'sync-alt'],
     color: '#8B5CF6'
+  },
+  {
+    id: 4,
+    title: 'Espaces de travail',
+    description: 'Organisez vos projets dans des espaces dédiés',
+    icon: ['fas', 'layer-group'],
+    color: '#F59E0B'
   }
 ]
 
+// Simulation des mises à jour en temps réel
+let statsInterval: NodeJS.Timeout
+onMounted(() => {
+  statsInterval = setInterval(() => {
+    liveStats.value.activeUsers = `${(2.1 + Math.random() * 0.6).toFixed(1)}K`
+    liveStats.value.filesShared = String(820 + Math.floor(Math.random() * 50))
+    liveStats.value.activeTeams = String(140 + Math.floor(Math.random() * 30))
+  }, 4000)
+})
+
+onUnmounted(() => {
+  if (statsInterval) {
+    clearInterval(statsInterval)
+  }
+})
+
 // Fonctions
 const getParticleStyle = (index: number) => {
-  const delay = Math.random() * 6
-  const duration = 8 + Math.random() * 6
+  const delay = Math.random() * 8
+  const duration = 10 + Math.random() * 8
   const x = Math.random() * 100
   const y = Math.random() * 100
-  const size = 1 + Math.random() * 3
-  const opacity = 0.1 + Math.random() * 0.2
+  const size = 1 + Math.random() * 4
+  const opacity = 0.05 + Math.random() * 0.15
   
   return {
     left: `${x}%`,
@@ -210,7 +308,7 @@ const handleLogin = async () => {
   
   // Simulation de connexion (remplacez par votre logique)
   try {
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    await new Promise(resolve => setTimeout(resolve, 2000))
     
     // Redirection vers le dashboard
     await navigateTo('/dashboard')
@@ -226,7 +324,8 @@ const handleLogin = async () => {
 @use "@/assets/scss/variables" as *;
 
 .login-page {
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   background: linear-gradient(135deg, 
     #000000 0%, 
     #1a1a1a 25%, 
@@ -236,11 +335,17 @@ const handleLogin = async () => {
   );
   color: $white;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: $spacing-xl 0;
+  padding: $spacing-md 0;
+  
+  @media (max-width: $mobile) {
+    padding: $spacing-sm 0;
+    align-items: flex-start;
+    padding-top: $spacing-md;
+  }
 }
 
 // Background effects
@@ -311,6 +416,15 @@ const handleLogin = async () => {
     left: 20%;
     animation: floatShape 18s ease-in-out infinite;
   }
+  
+  &.shape-4 {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    animation: floatShape 22s ease-in-out infinite;
+  }
 }
 
 .login-overlay {
@@ -329,14 +443,319 @@ const handleLogin = async () => {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 450px;
+  max-width: 1400px;
+  height: 100%;
   padding: 0 $spacing-md;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-lg;
+  align-items: stretch;
+  
+  @media (max-width: $mobile) {
+    padding: 0;
+    gap: 0;
+    max-width: 100%;
+  }
 }
 
-// Header avec logo
-.login-header {
+// Section de gauche - Branding et informations
+.login-left {
+  flex: 1;
+  min-width: 500px;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+}
+
+.branding-section {
   text-align: center;
-  margin-bottom: $spacing-2xl;
+  margin-bottom: $spacing-lg;
+}
+
+// Stats en temps réel
+.live-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+}
+
+.stat-item {
+  @extend .glass-card-mini;
+  padding: $spacing-sm;
+  text-align: center;
+  position: relative;
+  min-height: $card-min-height-mobile;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-number {
+  font-size: $mini-stat-number-size;
+  font-weight: 700;
+  color: $primary;
+  line-height: 1;
+  margin-bottom: $spacing-xs;
+}
+
+.stat-label {
+  font-size: $mini-stat-label-size;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.live-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  background: #10B981;
+  border-radius: 50%;
+  animation: pulseIndicator 2s infinite;
+}
+
+// Section de droite - Formulaire
+.login-right {
+  flex: 1;
+  min-width: 450px;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+  
+  @media (max-width: $mobile) {
+    min-width: 100%;
+    padding: 0;
+  }
+}
+
+.form-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: auto;
+  min-height: auto;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: $spacing-sm;
+}
+
+.form-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: $white;
+  margin: 0 0 $spacing-xs 0;
+  background: linear-gradient(135deg, 
+    $white 0%, 
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(59, 130, 246, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: $spacing-sm;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: $spacing-xs;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 $spacing-md;
+  height: $glass-element-height;
+  min-height: $input-height;
+}
+
+.input-icon {
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: $spacing-sm;
+  font-size: 1rem;
+}
+
+.form-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: $white;
+  font-size: $input-font-size;
+  height: 100%;
+  outline: none;
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+.password-toggle {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: $spacing-sm;
+  border-radius: $radius-sm;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  &:hover {
+    color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $spacing-md;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  
+  input[type="checkbox"] {
+    display: none;
+  }
+  
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    transition: all 0.2s ease;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid $white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+  }
+  
+  input:checked + .checkmark {
+    background: $primary;
+    border-color: $primary;
+    
+    &::after {
+      opacity: 1;
+    }
+  }
+  
+  .checkbox-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+  }
+}
+
+.forgot-password {
+  color: rgba(59, 130, 246, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: rgba(59, 130, 246, 1);
+  }
+}
+
+.form-actions {
+  margin: $spacing-lg 0 $spacing-md 0;
+}
+
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin: $spacing-md 0;
+}
+
+.register-section {
+  text-align: center;
+  margin-top: $spacing-md;
+}
+
+.register-text {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: $spacing-sm;
+  font-size: 0.95rem;
+}
+
+.quick-links {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
 }
 
 .logo-container {
@@ -420,17 +839,7 @@ const handleLogin = async () => {
   line-height: 1.4;
 }
 
-// Glassmorphisme styles
-.glass-card-enhanced {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
+// Styles pour les éléments glassmorphisme internes
 
 .glass-input {
   background: rgba(255, 255, 255, 0.05);
@@ -456,100 +865,83 @@ const handleLogin = async () => {
   overflow: hidden;
 }
 
-// Formulaire
-.login-form-container {
-  padding: $spacing-2xl;
-  margin-bottom: $spacing-xl;
+// Features
+.login-features {
+  margin-top: $spacing-lg;
+  flex: 1;
 }
 
-.form-header {
+.features-header {
   text-align: center;
-  margin-bottom: $spacing-xl;
+  margin-bottom: $spacing-lg;
 }
 
-.form-title {
+.features-title {
   font-size: 1.5rem;
   font-weight: 600;
   color: $white;
   margin: 0;
 }
 
-.form-group {
-  margin-bottom: $spacing-lg;
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $spacing-sm;
 }
 
-.form-label {
-  display: block;
-  margin-bottom: $spacing-sm;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 500;
-  font-size: 0.95rem;
+.feature-item {
+  @extend .glass-card;
+  padding: $spacing-md;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+  }
 }
 
-.input-container {
-  position: relative;
+.feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
   display: flex;
   align-items: center;
-  padding: $spacing-md;
-}
-
-.input-icon {
-  color: rgba(255, 255, 255, 0.5);
-  margin-right: $spacing-sm;
-  font-size: 1rem;
-}
-
-.form-input {
-  flex: 1;
-  background: transparent;
-  border: none;
+  justify-content: center;
   color: $white;
-  font-size: 1rem;
-  outline: none;
-  
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-  }
+  font-size: $feature-icon-size;
+  margin: 0 auto $spacing-sm auto;
+  flex-shrink: 0;
 }
 
-.password-toggle {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  padding: $spacing-xs;
-  margin-left: $spacing-sm;
-  transition: color 0.2s ease;
-  
-  &:hover {
-    color: rgba(255, 255, 255, 0.8);
-  }
+.feature-content {
+  text-align: left;
 }
 
-.forgot-password {
-  display: inline-block;
-  margin-top: $spacing-sm;
-  color: rgba(59, 130, 246, 0.8);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
-  
-  &:hover {
-    color: rgba(59, 130, 246, 1);
-  }
+.feature-title {
+  font-size: $feature-title-size;
+  font-weight: 600;
+  color: $white;
+  margin: 0 0 $spacing-xs 0;
 }
 
-.form-actions {
-  margin: $spacing-xl 0;
+.feature-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: $feature-description-size;
+  margin: 0;
+  line-height: 1.3;
 }
 
+// Buttons styles
 .btn {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: $spacing-sm;
-  padding: $spacing-md $spacing-xl;
+  padding: 0 $spacing-xl;
+  height: $button-height;
+  min-height: $glass-element-height;
   border-radius: $radius-md;
   font-weight: 600;
   text-decoration: none;
@@ -557,7 +949,7 @@ const handleLogin = async () => {
   border: none;
   cursor: pointer;
   overflow: hidden;
-  font-size: 1rem;
+  font-size: $button-font-size;
   width: 100%;
   
   .btn-content {
@@ -592,9 +984,23 @@ const handleLogin = async () => {
     }
   }
   
+  &.btn-social {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+  }
+  
   &.btn-large {
-    padding: $spacing-lg $spacing-2xl;
-    font-size: 1.1rem;
+    height: $button-height-large;
+    min-height: $glass-element-height-large;
+    padding: 0 $spacing-2xl;
+    font-size: $btn-font-size-large;
   }
   
   &:disabled {
@@ -603,14 +1009,10 @@ const handleLogin = async () => {
   }
 }
 
-.form-footer {
-  margin-top: $spacing-xl;
-}
-
 .divider {
   position: relative;
   text-align: center;
-  margin: $spacing-xl 0;
+  margin: $spacing-md 0;
   
   &::before {
     content: '';
@@ -632,61 +1034,6 @@ const handleLogin = async () => {
   }
 }
 
-.register-section {
-  text-align: center;
-}
-
-.register-text {
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: $spacing-md;
-  font-size: 0.95rem;
-}
-
-// Features
-.login-features {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-md;
-}
-
-.feature-item {
-  @extend .glass-card;
-  padding: $spacing-lg;
-  text-align: center;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
-  }
-}
-
-.feature-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-md;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $white;
-  font-size: 1.2rem;
-  margin: 0 auto $spacing-md auto;
-}
-
-.feature-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: $white;
-  margin: 0 0 $spacing-sm 0;
-}
-
-.feature-description {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
-  margin: 0;
-  line-height: 1.4;
-}
-
 // Glassmorphisme cards
 .glass-card {
   background: rgba(255, 255, 255, 0.05);
@@ -698,9 +1045,17 @@ const handleLogin = async () => {
   overflow: hidden;
 }
 
-// Shine effects
-.card-shine,
-.feature-shine,
+.glass-card-mini {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+// Shine effects pour les boutons
 .btn-shine {
   position: absolute;
   top: 0;
@@ -712,8 +1067,6 @@ const handleLogin = async () => {
   pointer-events: none;
 }
 
-.login-form-container:hover .card-shine,
-.feature-item:hover .feature-shine,
 .btn:hover .btn-shine {
   left: 100%;
 }
@@ -745,45 +1098,54 @@ const handleLogin = async () => {
   }
 }
 
-// Responsive
-@media (max-width: $tablet) {
-  .login-page {
-    padding: $spacing-lg $spacing-md;
+@keyframes pulseIndicator {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .login-container {
-    max-width: 400px;
-  }
-  
-  .login-title {
-    font-size: 1.8rem;
-  }
-  
-  .login-form-container {
-    padding: $spacing-xl;
-  }
-  
-  .logo-glass {
-    width: 70px;
-    height: 70px;
+  50% { 
+    opacity: 0.5;
+    transform: scale(1.2);
   }
 }
 
-@media (max-width: $mobile) {
+// Responsive
+@media (max-width: $tablet) {
   .login-page {
-    padding: $spacing-md $spacing-sm;
+    padding: $spacing-sm 0;
   }
   
   .login-container {
-    max-width: 350px;
+    flex-direction: column;
+    max-width: 800px;
+    gap: $spacing-md;
+    height: auto;
+    min-height: 100%;
+  }
+  
+  .login-left,
+  .login-right {
+    min-width: auto;
+    padding: $spacing-md;
+    flex: none;
+  }
+  
+  .login-left {
+    order: 2;
+    min-height: auto;
+  }
+  
+  .login-right {
+    order: 1;
+    min-height: auto;
   }
   
   .login-title {
     font-size: 1.6rem;
   }
   
-  .login-form-container {
-    padding: $spacing-lg;
+  .form-wrapper {
+    // Le padding est géré par le composant Card
   }
   
   .logo-glass {
@@ -791,9 +1153,162 @@ const handleLogin = async () => {
     height: 60px;
   }
   
+  .live-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-xs;
+  }
+  
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-xs;
+  }
+  
+  .quick-links {
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+  
+  .branding-section {
+    margin-bottom: $spacing-md;
+  }
+  
+  .login-features {
+    margin-top: $spacing-md;
+  }
+  
+  .input-container {
+    height: $glass-element-height;
+    min-height: $input-height;
+  }
+  
+  .btn {
+    height: $button-height;
+    min-height: $glass-element-height;
+    padding: 0 $spacing-lg;
+    font-size: $button-font-size;
+  }
+}
+
+@media (max-width: $mobile) {
+  .login-page {
+    padding: 0;
+    height: 100vh;
+    max-height: 100vh;
+  }
+  
+  .login-container {
+    max-width: 100%;
+    padding: 0 $spacing-sm;
+    gap: $spacing-sm;
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .login-left,
+  .login-right {
+    padding: $spacing-sm;
+    min-height: auto;
+  }
+  
+  .login-left {
+    display: none; // Masquer sur mobile pour économiser l'espace
+  }
+  
+  .login-right {
+    flex: 1;
+    order: 1;
+  }
+  
+  .login-title {
+    font-size: 1.4rem;
+  }
+  
+  .form-wrapper {
+    // Le padding est géré par le composant Card
+    margin-bottom: $spacing-sm;
+  }
+  
+  .form-title {
+    font-size: 1.3rem;
+  }
+  
+  .form-header {
+    margin-bottom: $spacing-md;
+  }
+  
+  .logo-glass {
+    width: 50px;
+    height: 50px;
+  }
+  
   .logo-icon svg {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
+  }
+  
+  .live-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-xs;
+  }
+  
+  .stat-number {
+    font-size: $mini-stat-number-size-mobile;
+  }
+  
+  .stat-label {
+    font-size: $mini-stat-label-size-mobile;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-xs;
+  }
+  
+  .feature-item {
+    padding: $spacing-sm;
+  }
+  
+  .social-login {
+    gap: $spacing-xs;
+  }
+  
+  .btn {
+    height: $button-height-mobile;
+    min-height: $glass-element-height-mobile;
+    padding: 0 $spacing-md;
+    font-size: $button-font-size-mobile;
+  }
+  
+  .quick-links {
+    flex-direction: row;
+    gap: $spacing-sm;
+    justify-content: center;
+    margin-top: $spacing-sm;
+  }
+  
+  .form-group {
+    margin-bottom: $spacing-sm;
+  }
+  
+  .input-container {
+    height: $glass-element-height-mobile;
+    min-height: $input-height-mobile;
+  }
+  
+  .form-input {
+    font-size: $input-font-size-mobile;
+  }
+  
+  .form-actions {
+    margin: $spacing-md 0 $spacing-sm 0;
+  }
+  
+  .divider {
+    margin: $spacing-sm 0;
+  }
+  
+  .register-section {
+    margin-top: $spacing-sm;
   }
 }
 </style> 

@@ -1,6 +1,15 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  faQuoteLeft,
+  faQuoteRight,
+  faIdCard,
+  faIdCardAlt,
+  faIdBadge,
+  faIdCardClip,
+  faEyeSlash,
+  faLifeRing,
+  faShieldAlt,
   faHandshake,
   faSyncAlt,
   faLayerGroup,
@@ -205,6 +214,22 @@ import {
 
 // Ajout des icônes à la bibliothèque
 library.add(
+  faQuoteLeft,
+  faQuoteRight,
+  faIdCard,
+  faIdCardAlt,
+  faIdBadge,
+  faIdCardClip,
+  faEyeSlash,
+  faLifeRing,
+  faFileExcel,
+  faFileWord,
+  faFilePowerpoint,
+  faFileText,
+  faFilePdf,
+  faFileImage,
+  faFileVideo,
+  faShieldAlt,
   faHandshake,
   faAmazon,
   faGoogle,

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Header from './components/landing/Header.vue';
-// import MobileBottomBar from './components/ui/MobileBottomBar.vue';
 import SimpleMobileBar from './components/ui/SimpleMobileBar.vue';
 import { useRoute } from 'nuxt/app';
 import { computed } from 'vue';
@@ -153,10 +152,49 @@ useHead({
   }
 }
 
-/* Optimisation pour PWA - éviter le flash de contenu */
+@use "@/assets/scss/variables" as *;
+
+/* Background global uniforme pour toutes les pages */
+html {
+  background: linear-gradient(135deg, 
+    #000000 0%, 
+    #1a1a1a 25%, 
+    #0d1117 50%, 
+    #000000 75%, 
+    #1a1a1a 100%
+  ) !important;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
 body {
-  background-color: #000000;
+  background: transparent !important;
+  color: #ffffff;
+  position: relative;
   overflow-x: hidden;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+#__nuxt {
+  background: transparent;
+  min-height: 100vh;
 }
 
 /* Animation spéciale pour les chargements de navigation */

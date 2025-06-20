@@ -78,6 +78,24 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
+  // Désactiver le zoom et les interactions non désirées
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  // Désactiver le zoom au niveau HTML
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -85,6 +103,14 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
   color: var(--text-primary);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // Désactiver le zoom et optimiser pour mobile
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
   
   // Support pour iOS safe area et status bar
   padding-top: env(safe-area-inset-top);
@@ -198,6 +224,23 @@ body {
   * {
     -webkit-tap-highlight-color: transparent !important;
     -webkit-touch-callout: none !important;
+    touch-action: manipulation !important;
+  }
+  
+  // Permettre la sélection pour les inputs et zones de texte
+  input, textarea, select, [contenteditable] {
+    -webkit-user-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+    -webkit-touch-callout: default !important;
+  }
+  
+  // Désactiver complètement le zoom
+  html, body {
+    touch-action: manipulation !important;
+    -webkit-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
   }
   
   // Buttons et liens optimisés pour le touch

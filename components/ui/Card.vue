@@ -11,7 +11,7 @@
     type: {
       type: String,
       required: true,
-      validator: value => ['primary', 'secondary', 'bordered', 'clickable', 'iconcard', 'home-card', 'feature-card'].includes(value)
+      validator: value => ['primary', 'secondary', 'bordered', 'clickable', 'iconcard', 'home-card', 'feature-card', 'auth-card'].includes(value)
     },
     color: {
       type: String,
@@ -160,6 +160,65 @@
     }
   }
 
+  // Carte d'authentification avec glassmorphisme
+  .auth-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: $spacing-sm;
+    position: relative;
+    overflow: visible;
+    transition: all 0.3s ease;
+    cursor: default;
+    height: auto;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    
+    // Effet de brillance en haut
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      pointer-events: none;
+    }
+    
+    // Effet shine au survol
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+      pointer-events: none;
+    }
+    
+    &:hover::after {
+      left: 100%;
+    }
+    
+    // Responsive
+    @media (max-width: $tablet) {
+      padding: $spacing-xs;
+      margin: 0;
+    }
+    
+    @media (max-width: $mobile) {
+      padding: $spacing-xs;
+      border-radius: 16px;
+      margin: 0;
+      width: 100%;
+    }
+  }
 
   </style>
   
