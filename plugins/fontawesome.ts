@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
+  faEllipsisH,
   faQuoteLeft,
   faQuoteRight,
   faIdCard,
@@ -214,6 +215,7 @@ import {
 
 // Ajout des icônes à la bibliothèque
 library.add(
+  faEllipsisH,
   faQuoteLeft,
   faQuoteRight,
   faIdCard,

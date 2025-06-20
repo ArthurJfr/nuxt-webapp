@@ -667,18 +667,19 @@ const toggleMobileMenu = () => {
 
 // Glassmorphisme style dashboard enhanced
 .glass-card-enhanced {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 16px;
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.16);
     transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -990,39 +991,46 @@ const toggleMobileMenu = () => {
 
 // Mini cards style dashboard
 .glass-card-mini {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   position: relative;
   overflow: hidden;
 }
 
 .mini-stat-card {
-  padding: 0.6rem;
+  padding: 0.8rem;
   text-align: center;
   transition: all 0.2s ease;
   position: relative;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
 }
 
 .mini-stat-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   color: rgba(255, 255, 255, 0.9);
-  font-size: $mini-stat-icon-size;
-  margin: 0 auto 0.4rem auto;
+  font-size: 16px;
+  margin: 0 auto 0.5rem auto;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+  }
 }
 
 .mini-stat-number {
